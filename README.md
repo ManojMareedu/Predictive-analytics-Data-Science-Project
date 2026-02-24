@@ -8,17 +8,17 @@
 
 ## Table of Contents
 
-*   • [Business Impact](#business-impact)
-*   • [Project Overview](#project-overview)
-*   • [Key Findings](#key-findings)
-*   • [Dataset](#dataset)
-*   • [Methodology](#methodology)
-*   • [Technical Architecture](#technical-architecture)
-*   • [Results](#results)
-*   • [Repository Structure](#repository-structure)
-*   • [Getting Started](#getting-started)
-*   • [Tech Stack](#tech-stack)
-*   • [Author](#author)
+*    [Business Impact](#business-impact)
+*    [Project Overview](#project-overview)
+*    [Key Findings](#key-findings)
+*    [Dataset](#dataset)
+*    [Methodology](#methodology)
+*    [Technical Architecture](#technical-architecture)
+*    [Results](#results)
+*    [Repository Structure](#repository-structure)
+*    [Getting Started](#getting-started)
+*    [Tech Stack](#tech-stack)
+*    [Author](#author)
 
 ---
 
@@ -26,11 +26,11 @@
 
 Conagra Brands faces the complex challenge of optimizing a diverse brand portfolio amidst shifting consumer behaviors in the post-pandemic recovery phase. This project delivers a **Predictive Analytics Framework** that directly impacts high-stakes marketing and supply chain decisions:
 
-*   • **Portfolio Strategic Alignment:** Identifies which brands (e.g., BlueBonnet, Imperial RFG) demonstrate the highest positive significance on unit volume, enabling data-backed SKU prioritization and investment.
-*   • **Regional Growth Optimization:** Quantifies regional market disparities, pinpointing the **Northeast** and **Southeast** as high-impact zones for focused marketing spend and distribution expansion.
-*   • **Price Elasticity Intelligence:** Analyzes the relationship between "No Merch" pricing and unit volume, revealing consumer loyalty patterns that allow for price maintenance without volume attrition during high-demand cycles.
-*   • **Merchandising Effectiveness:** Provides a comparative analysis of merchandised vs. organic shelf presence (No Merch), helping trade marketing teams optimize promotional calendars and retail partner incentives.
-*   • **Growth Acceleration:** Pinpoints the underlying drivers of a 2022 recovery, offering a roadmap to replicate successful market patterns in lower-performing regions like the Plains.
+*    **Portfolio Strategic Alignment:** Identifies which brands (e.g., BlueBonnet, Imperial RFG) demonstrate the highest positive significance on unit volume, enabling data-backed SKU prioritization and investment.
+*    **Regional Growth Optimization:** Quantifies regional market disparities, pinpointing the **Northeast** and **Southeast** as high-impact zones for focused marketing spend and distribution expansion.
+*    **Price Elasticity Intelligence:** Analyzes the relationship between "No Merch" pricing and unit volume, revealing consumer loyalty patterns that allow for price maintenance without volume attrition during high-demand cycles.
+*    **Merchandising Effectiveness:** Provides a comparative analysis of merchandised vs. organic shelf presence (No Merch), helping trade marketing teams optimize promotional calendars and retail partner incentives.
+*    **Growth Acceleration:** Pinpoints the underlying drivers of a 2022 recovery, offering a roadmap to replicate successful market patterns in lower-performing regions like the Plains.
 
 ---
 
@@ -78,20 +78,20 @@ The analytical workflow spans from multi-year data concatenation and rigorous cl
 ## Methodology
 
 ### 1. Data Engineering & Preprocessing
-*   • **Multi-Year Integration:** Concatenated 2018, 2020, and 2022 POS datasets to capture long-term trends.
-*   • **Cleaning:** Applied rigorous null handling (filling with 0 where appropriate) and duplicate removal.
-*   • **Feature Extraction:** Engineered brand labels and year/week features from raw product and time descriptions.
-*   • **Segmentation:** Excluded "Total US" to prevent aggregation bias and focus on regional market dynamics.
+*    **Multi-Year Integration:** Concatenated 2018, 2020, and 2022 POS datasets to capture long-term trends.
+*    **Cleaning:** Applied rigorous null handling (filling with 0 where appropriate) and duplicate removal.
+*    **Feature Extraction:** Engineered brand labels and year/week features from raw product and time descriptions.
+*    **Segmentation:** Excluded "Total US" to prevent aggregation bias and focus on regional market dynamics.
 
 ### 2. Statistical Analysis & EDA
-*   • **Hypothesis Testing:** Conducted **ANOVA** and **T-Tests** (p < 0.05) confirming that regional and annual sales variations are statistically significant.
-*   • **Correlation Analysis:** Identified strong collinearity between Base Volume and Units, requiring careful feature selection.
-*   • **Trend Benchmarking:** Documented a consistent rise in mean Dollar Sales and Price despite brand count consolidation.
+*    **Hypothesis Testing:** Conducted **ANOVA** and **T-Tests** (p < 0.05) confirming that regional and annual sales variations are statistically significant.
+*    **Correlation Analysis:** Identified strong collinearity between Base Volume and Units, requiring careful feature selection.
+*    **Trend Benchmarking:** Documented a consistent rise in mean Dollar Sales and Price despite brand count consolidation.
 
 ### 3. Predictive Modeling
-*   • **Lasso Regression:** Implemented for automated feature selection, identifying the most influential brands and regions.
-*   • **Linear Regression:** Established baseline coefficients for price and ACV distribution impact.
-*   • **Polynomial Regression:** Developed the final production-grade model to capture non-linear relationships, achieving **81% predictive accuracy**.
+*    **Lasso Regression:** Implemented for automated feature selection, identifying the most influential brands and regions.
+*    **Linear Regression:** Established baseline coefficients for price and ACV distribution impact.
+*    **Polynomial Regression:** Developed the final production-grade model to capture non-linear relationships, achieving **81% predictive accuracy**.
 
 ---
 
