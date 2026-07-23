@@ -8,6 +8,7 @@
 ![Docker](https://img.shields.io/badge/Docker-containerised-2496ED?logo=docker&logoColor=white)
 ![Kubernetes](https://img.shields.io/badge/Kubernetes-local%20cluster-326CE5?logo=kubernetes&logoColor=white)
 ![CI](https://github.com/ManojMareedu/Predictive-analytics-Data-Science-Project/actions/workflows/ci.yml/badge.svg)
+[![Live dashboard](https://img.shields.io/badge/Live%20dashboard-Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://predictive-analytics-retail-sales.streamlit.app/)
 
 Predicting non-promoted unit sales for the refrigerated tablespreads category
 from 1.0M rows of IRI point-of-sale data (2018–2022), with the full MLOps path
@@ -316,8 +317,12 @@ deployment pattern, it does not serve production traffic. Tear down with
 
 ## Dashboard
 
+**▶ Live app: [predictive-analytics-retail-sales.streamlit.app](https://predictive-analytics-retail-sales.streamlit.app/)**
+— deployed on Streamlit Community Cloud, running the exact model in
+`exported_model/`.
+
 ```bash
-streamlit run streamlit_app.py
+streamlit run streamlit_app.py   # or run it locally
 ```
 
 Five tabs: regional performance, brand drivers, price and promotion, a live
@@ -334,15 +339,15 @@ Parquet, neither of which is in git. With `exported_model/` absent the three
 analysis tabs still render and the Predict tab reports the model as unavailable
 rather than crashing.
 
-### Deploy to Streamlit Community Cloud
+### Deploying your own copy
 
-Free, no credit card, and the repo is already in the state it needs to be in.
+The live app above is already running from this repository. To stand up a fork
+on Streamlit Community Cloud — free, no credit card:
 
 1. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub and
-   authorise access to this repository.
+   authorise access to your fork.
 2. **Create app** → **Deploy a public app from GitHub**.
-3. Repository `ManojMareedu/Predictive-analytics-Data-Science-Project`, branch
-   `main`, main file path `streamlit_app.py`.
+3. Select your fork, branch `main`, main file path `streamlit_app.py`.
 4. **Deploy**.
 
 Leave the Python version at the default and add no secrets — the app takes no
