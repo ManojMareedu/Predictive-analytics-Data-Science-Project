@@ -17,4 +17,8 @@ ignore = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+# The modules under test live at the repo root, not in an installed package.
+# `python -m pytest` happens to add the CWD to sys.path, but a bare `pytest`
+# (what CI runs) does not -- so without this the imports fail only in CI.
+pythonpath = ["."]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]

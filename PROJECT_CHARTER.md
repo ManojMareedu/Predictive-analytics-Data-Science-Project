@@ -74,8 +74,11 @@ the reported numbers exactly.
 
 ## Definition of done
 
-- [ ] `dvc pull && python pipeline.py` reproduces the reported metrics from a
-      fresh clone.
+- [ ] `dvc pull && python pipeline.py` reproduces the reported metrics on a
+      machine with access to the local DVC remote. (A clone without access to
+      `dvc-storage/` must point the remote at it, or supply the raw workbooks
+      and let `build_dataset()` rebuild the Parquet — the local-folder remote is
+      machine-local by design, which is the cost of the no-cloud constraint.)
 - [ ] Every candidate model reports a temporal-holdout score *and* k-fold CV
       mean ± std; no single-split number stands alone.
 - [ ] VIF, residual diagnostics, and multiplicity-corrected p-values are computed

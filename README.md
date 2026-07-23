@@ -144,10 +144,32 @@ cd Predictive-analytics-Data-Science-Project
 
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
+```
 
-# Raw workbooks and the cleaned Parquet are DVC-tracked, not in git
+### Getting the data
+
+The 5 raw workbooks (~315 MB) and the cleaned Parquet (81 MB) are DVC-tracked
+rather than committed. The DVC remote is a **local folder** (`dvc-storage/`),
+which is what keeps this project at zero cost — but it also means the remote is
+machine-local, not something a fresh clone can reach:
+
+```bash
+# On the machine that holds dvc-storage/
+dvc pull
+
+# From a clone elsewhere, point the remote at that folder first
+dvc remote modify --local localstore url /path/to/dvc-storage
 dvc pull
 ```
+
+With no access to the remote at all, supply the five
+`IRI_POS_Tablespreads_YYYY.xlsx` workbooks at the repo root and
+`python pipeline.py` will rebuild the Parquet from them — `_ingest()` falls back
+to `build_dataset()` whenever the Parquet is missing.
+
+The repo is still fully inspectable without the data: the exported model, the
+dashboard aggregates, the plots, and the JSON result files are all committed, so
+the API, dashboard and tests run on a plain clone.
 
 ### Reproduce the full pipeline
 
