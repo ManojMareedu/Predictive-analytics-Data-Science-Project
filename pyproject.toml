@@ -1,0 +1,20 @@
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+# The original notebook and its script export are kept as the historical record of
+# the earlier analysis; they are not maintained code and are not linted.
+exclude = [
+    ".venv", "mlruns", "exported_model", "data", "dvc-storage",
+    "Group16_PA_Tablespreads.py", "*.ipynb",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = [
+    "E402",  # EDA.py must set the matplotlib Agg backend before importing pyplot
+    "B008",  # FastAPI's Depends()/Field() in defaults is the framework's idiom
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
