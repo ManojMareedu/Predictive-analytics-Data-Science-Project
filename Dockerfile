@@ -12,12 +12,12 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Then the model's own pins, which MLflow regenerates on every export.
-# This layer is not optional: a pickled sklearn Pipeline only loads under the
-# version that wrote it. requirements.txt floats (`scikit-learn>=1.3`), so a
-# fresh build otherwise picks up whatever is current -- 1.9.0 against a model
-# written by 1.6.1 fails with "Can't get attribute '_RemainderColsList'".
-# Installing exported_model/requirements.txt last pins serving to the exact
-# training environment, and stays correct automatically after a retrain.
+# requirements.txt already pins the model-critical libraries to these same
+# versions, so this layer is normally a no-op. It stays because it is the file
+# MLflow rewrites automatically on every retrain: if a future export moves to a
+# newer scikit-learn and requirements.txt is not updated to match, this line
+# still pins serving to the environment that actually wrote the pickle, instead
+# of failing at load with "Can't get attribute '_RemainderColsList'".
 COPY exported_model/ ./exported_model/
 RUN pip install --no-cache-dir -r exported_model/requirements.txt
 

@@ -65,7 +65,18 @@ class PredictionRequest(BaseModel):
     year: int = Field(..., ge=2018, le=2035)
     week: int = Field(..., ge=1, le=53)
     brand: str = Field(..., min_length=1, description="e.g. BLUEBONNET. Unseen brands are accepted.")
-    geography: str = Field(..., min_length=1, description="e.g. 'Great Lakes - Multi Outlet + Conv'")
+    # The full IRI market label, verbatim. The eight real values all carry the
+    # ' - IRI Standard - ' infix; a shortened label is not an error, it just one-hot
+    # encodes to the infrequent bucket and quietly returns a worse prediction.
+    geography: str = Field(
+        ...,
+        min_length=1,
+        description=(
+            "Full IRI market label, e.g. 'Great Lakes - IRI Standard - Multi Outlet + Conv'. "
+            "One of 8 regions: California, Great Lakes, Mid-South, Northeast, Plains, "
+            "South Central, Southeast, West. Unrecognised labels bucket instead of raising."
+        ),
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -79,7 +90,7 @@ class PredictionRequest(BaseModel):
                 "year": 2022,
                 "week": 26,
                 "brand": "BLUEBONNET",
-                "geography": "Great Lakes - Multi Outlet + Conv",
+                "geography": "Great Lakes - IRI Standard - Multi Outlet + Conv",
             }
         }
     }

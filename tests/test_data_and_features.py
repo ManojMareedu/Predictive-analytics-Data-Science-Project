@@ -132,6 +132,26 @@ def test_vif_report_shape():
     assert (out["vif"] > 0).all()
 
 
+def test_pipeline_step_annotations_are_real_types():
+    """ZenML resolves step I/O types from `__annotations__`, and looks them up in a
+    registry keyed by class.
+
+    A `from __future__ import annotations` in `pipeline.py` turns those into
+    strings, ZenML raises `AttributeError: 'str' object has no attribute
+    '__mro__'` while compiling the pipeline, and every run silently drops to the
+    direct-call fallback. The failure looks exactly like an unreachable server,
+    so assert the annotations are classes rather than trusting a comment.
+    """
+    import pipeline
+
+    for fn in (pipeline._ingest, pipeline._eda, pipeline._train_and_select):
+        for arg, annotation in fn.__annotations__.items():
+            assert not isinstance(annotation, str), (
+                f"{fn.__name__}({arg}) annotation is the string {annotation!r}, not a type -- "
+                "pipeline.py must not use `from __future__ import annotations`"
+            )
+
+
 def test_every_candidate_model_is_seeded():
     """Reproducibility: no candidate may carry an unset random_state."""
     for name, pipe in candidate_models().items():

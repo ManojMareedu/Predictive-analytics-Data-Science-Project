@@ -33,6 +33,7 @@ a business dashboard, and CI.
 - [Tech stack](#tech-stack)
 - [Documentation](#documentation)
 - [Author](#author)
+- [License](#license)
 
 ---
 
@@ -190,8 +191,14 @@ first — it is experiment tracking, not data.
 
 ```bash
 mlflow ui --backend-store-uri sqlite:///mlflow.db   # inspect runs
-pytest -q                                            # 15 tests
+pytest -q                                            # 16 tests
 ```
+
+`pipeline.py` runs through ZenML on the default local stack — local orchestrator,
+local artifact store, SQLite metadata, no server and no account. `run()` still
+falls back to calling the same functions directly if ZenML is unavailable, so a
+serving-only install (which has no ZenML) can retrain. Both paths execute the
+same steps and produce the same numbers; see [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
 ---
 
@@ -221,8 +228,12 @@ curl -X POST http://localhost:8000/predict -H 'Content-Type: application/json' -
 {"predicted_unit_sales": 140292.4, "model_name": "hist_gbr", "note": "ok"}
 ```
 
-Sanity check: actual median for that brand, region and distribution band in 2022
-is 127,941 units.
+Sanity check: the actual median for BLUEBONNET in Great Lakes across 2022+ at a
+comparable distribution level (ACV 60–70, n = 14) is **127,941 units**, against a
+prediction of 140,292. Note how narrow that comparison has to be to mean
+anything — the same brand and region across *all* distribution levels has a
+median of 1,595 units, because ACV distribution drives volume far harder than
+brand or region does.
 
 ### Docker
 
@@ -231,12 +242,17 @@ docker build -t tablespreads-api:latest .
 docker run -p 8000:8000 tablespreads-api:latest
 ```
 
-The image installs `exported_model/requirements.txt` **after** `requirements.txt`.
-That is not redundant: a pickled sklearn `Pipeline` only loads under the version
-that wrote it, and `requirements.txt` floats (`scikit-learn>=1.3`). A build that
-skips this picks up whatever sklearn is current and fails to unpickle the model.
-MLflow regenerates those pins on every export, so this stays correct after a
-retrain.
+A pickled sklearn `Pipeline` only loads under the version that wrote it, so
+`requirements.txt` pins the model-critical libraries (`scikit-learn==1.6.1`,
+`numpy`, `scipy`, `pandas`, `cloudpickle`, `mlflow`) to the exact versions that
+produced `exported_model/model.pkl`. Everything above that line — FastAPI,
+Streamlit, Plotly — is bounded to a major version instead, because it plays no
+part in the pickle.
+
+The image then installs `exported_model/requirements.txt` on top. That is
+normally a no-op, and it stays because MLflow rewrites that file automatically on
+every export: if a retrain moves to a newer scikit-learn and `requirements.txt`
+is not updated to match, this is the pin that cannot go stale.
 
 ---
 
@@ -284,6 +300,27 @@ explains the difference.
 It reads 17 KB of pre-aggregated CSVs from `data/dashboard/` rather than the
 81 MB Parquet, and calls the exported model directly rather than the API — so it
 deploys to Streamlit Community Cloud free tier with no data pull and no backend.
+
+Everything it needs is committed: `data/dashboard/*.csv`, `exported_model/`, and
+the two diagnostic plots. It never touches `mlflow.db` or the DVC-tracked
+Parquet, neither of which is in git. With `exported_model/` absent the three
+analysis tabs still render and the Predict tab reports the model as unavailable
+rather than crashing.
+
+### Deploy to Streamlit Community Cloud
+
+Free, no credit card, and the repo is already in the state it needs to be in.
+
+1. Sign in at [share.streamlit.io](https://share.streamlit.io) with GitHub and
+   authorise access to this repository.
+2. **Create app** → **Deploy a public app from GitHub**.
+3. Repository `ManojMareedu/Predictive-analytics-Data-Science-Project`, branch
+   `main`, main file path `streamlit_app.py`.
+4. **Deploy**.
+
+Leave the Python version at the default and add no secrets — the app takes no
+configuration. The build installs `requirements.txt` only, which is why the
+model-critical versions in it are pinned rather than floating.
 
 ---
 
@@ -336,7 +373,7 @@ Findings worth stating plainly:
 ├── app/model_server.py        # FastAPI serving
 ├── streamlit_app.py           # Business dashboard
 ├── k8s/                       # Deployment, Service, ConfigMap (local cluster)
-├── tests/                     # 15 unit + smoke tests
+├── tests/                     # 16 unit + smoke tests
 ├── exported_model/            # Winning model, MLflow format
 ├── data/dashboard/            # Small aggregates for the dashboard
 ├── Visualization Results/     # Generated plots
@@ -347,6 +384,7 @@ Findings worth stating plainly:
 ├── ARCHITECTURE.md            # Component walkthrough + diagram
 ├── MODEL_CARD.md              # Metrics, diagnostics, limitations
 ├── ROADMAP.md                 # Phase checklist
+├── LICENSE                    # MIT
 └── Group16_PA_Tablespreads.ipynb   # Original notebook, kept as the record
 ```
 
@@ -361,7 +399,7 @@ Findings worth stating plainly:
 | **Modelling** | scikit-learn (Ridge, Lasso, ElasticNet, Polynomial, HistGradientBoosting) |
 | **Statistics** | statsmodels, SciPy |
 | **Tracking & registry** | MLflow (local SQLite backend) |
-| **Orchestration** | ZenML steps, with a direct fallback so training never depends on a server |
+| **Orchestration** | ZenML (local stack — no server, no account), with a direct fallback so training never depends on it |
 | **Serving** | FastAPI, Uvicorn, Pydantic v2 |
 | **Dashboard** | Streamlit, Plotly |
 | **Container / orchestration** | Docker, Kubernetes (local cluster) |
@@ -393,3 +431,13 @@ managed Kubernetes.
 Originally built as a Predictive Analytics project at the University of Texas at
 Dallas, then rebuilt as a production system with the leakage corrected and the
 validation redone.
+
+---
+
+## License
+
+Released under the MIT License — see [`LICENSE`](LICENSE).
+
+The IRI point-of-sale data is **not** covered by that license. It was provided
+for academic coursework, is not redistributed here, and is DVC-tracked rather
+than committed for that reason.

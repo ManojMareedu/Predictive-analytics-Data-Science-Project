@@ -111,13 +111,34 @@ from a partial run is `rm -rf mlflow.db mlruns/` followed by a clean rerun —
 total runtime is minutes, so checkpoint/resume machinery would be more code than
 the thing it saves.
 
-### ZenML orchestration is optional at runtime
+### ZenML orchestrates, and the fallback stays anyway
 
-`pipeline.py` defines `@step`/`@pipeline` wrappers, but `run()` falls back to
-calling the same functions directly if ZenML fails — and that fallback covers
-*runtime* failure, not just a missing import. ZenML can import successfully while
-still being configured against a tracking server that is not running, which is
-exactly what happens on this machine. Training is the thing that must not break:
-a fresh clone and a CI runner both need `pip install -r requirements.txt` and
-nothing more. The steps executed and the metrics produced are identical on either
-path, because the ZenML wrappers only call the plain functions.
+`python pipeline.py` runs through ZenML: `ingest_step → eda_step → train_step` on
+the default local stack (local orchestrator, local artifact store, SQLite
+metadata). No server process and no account — `zenml login --local` starts a
+dashboard if you want one, but nothing in the pipeline requires it.
+
+Getting there surfaced a bug worth recording, because the design that hid it is a
+general trap. `run()` wraps the ZenML call in `try/except` and falls back to
+calling the same plain functions directly. For several runs that fallback was
+firing every time, and the printed reason — an exception *class name* — made a
+compile-time defect in the code look exactly like an unreachable server.
+
+The actual cause was `from __future__ import annotations` at the top of
+`pipeline.py`. PEP 563 turns every annotation into a string; ZenML resolves each
+step's input and output types by looking the annotation up in a materializer
+registry keyed by class, so it received `"dict"` and raised
+`AttributeError: 'str' object has no attribute '__mro__'` while compiling the
+pipeline. Removing that one import fixed orchestration outright.
+`tests/test_data_and_features.py::test_pipeline_step_annotations_are_real_types`
+now asserts the annotations resolve to classes, so the import cannot come back
+quietly, and the fallback prints the exception *message* rather than just its
+type.
+
+The fallback itself stays, deliberately. Training is the thing that must not go
+down because an orchestrator is unavailable: a fresh clone or a CI runner needs
+`pip install -r requirements.txt` and nothing more, and ZenML is a
+`requirements-dev.txt` dependency that a serving-only install does not have. The
+steps executed and the metrics produced are identical on either path, because the
+ZenML wrappers do nothing but call the plain functions — which is also what makes
+the plain functions directly importable by the tests.

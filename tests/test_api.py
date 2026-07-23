@@ -27,7 +27,10 @@ VALID = {
     "year": 2022,
     "week": 26,
     "brand": "BLUEBONNET",
-    "geography": "Great Lakes - Multi Outlet + Conv",
+    # The real IRI label, verbatim. A shortened one still returns 200 -- it just
+    # buckets as an unseen category, which would make the unseen-brand test below
+    # prove nothing, since its baseline would already be bucketed.
+    "geography": "Great Lakes - IRI Standard - Multi Outlet + Conv",
 }
 
 

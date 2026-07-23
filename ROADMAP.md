@@ -72,7 +72,7 @@ and push per phase.
 ## Phase F — Tests & CI ✅
 
 - [x] `tests/` — cleaning, schema drift, calendar derivation, leakage guard,
-      multiplicity correction, seeding, and FastAPI smoke tests. 15 passing.
+      multiplicity correction, seeding, and FastAPI smoke tests. 16 passing.
 - [x] `.github/workflows/ci.yml` — lint → format → test → docker build →
       `/health` and `/predict` smoke
 
@@ -81,6 +81,19 @@ and push per phase.
 - [x] `README.md` rewritten
 - [x] `MODEL_CARD.md` finalised with the real numbers
 - [x] This file marked complete
+
+## Phase H — Close-out ✅
+
+- [x] MIT `LICENSE` added, referenced from the README footer, with the IRI data
+      explicitly carved out of it
+- [x] ZenML orchestration fixed for real rather than documented around — see
+      *Resolved: ZenML now orchestrates* below
+- [x] `requirements.txt` pinned on the model-critical libraries so a Streamlit
+      Community Cloud build cannot resolve to a scikit-learn that fails to
+      unpickle the model
+- [x] Dashboard verified standalone with `mlflow.db` and the Parquet removed
+- [x] Both Mermaid diagrams validated against the mermaid parser, not eyeballed
+- [x] Streamlit Community Cloud click path documented in the README
 
 ## Done — what changed vs. the original notebook
 
@@ -99,24 +112,57 @@ See `MODEL_CARD.md` for the full metrics discussion.
 - **Rigor checks added:** VIF (max 2.51, nothing dropped), residual diagnostics
   (33× heteroscedasticity, skew 14.7, kurtosis 390.5), Bonferroni/BH corrections
   (11 raw → 9 Bonferroni-significant), and a measured data-quality audit.
-- **Two real bugs found and fixed:**
+- **Four real bugs found and fixed:**
   1. The holdout `Year == 2022` silently dropped 3,564 rows dated 01-01-2023
      from both train and test. Now `Year >= 2022`.
   2. The serving container installed whatever scikit-learn was current (1.9.0)
      against a model pickled by 1.6.1, so it could not unpickle. The image and
      CI now install `exported_model/requirements.txt`, which MLflow regenerates
-     on every export.
+     on every export, and `requirements.txt` pins the model-critical libraries
+     directly — Streamlit Community Cloud installs only that file and has no
+     second step in which to correct a bad resolution.
+  3. `from __future__ import annotations` in `pipeline.py` turned every step
+     annotation into a string, so ZenML could not resolve step types and every
+     run fell through to the direct-call fallback. See below.
+  4. The API's OpenAPI example, the smoke tests and the CI payload all used
+     `"Great Lakes - Multi Outlet + Conv"`, which is not one of the eight real
+     IRI market labels (they carry a ` - IRI Standard - ` infix). Requests still
+     returned 200 — the label just one-hot encoded to the infrequent bucket — so
+     the documented example quietly taught callers to get a worse prediction.
 - **Infrastructure added:** DVC data versioning, MLflow tracking and registry,
   FastAPI serving, Docker, local Kubernetes, Streamlit dashboard, tests and CI.
 
+### Resolved: ZenML now orchestrates
+
+`python pipeline.py` runs `ingest_step → eda_step → train_step` through ZenML on
+the default local stack — local orchestrator, local artifact store, SQLite
+metadata, no server and no account.
+
+This was previously listed as a known gap, on the assumption that it was an
+environment problem. It was not. Two things were wrong, and only the first was
+environmental:
+
+1. The global ZenML config was written by a newer client (0.93.2) than the
+   installed one (0.90.0) and pointed at a REST store on `127.0.0.1:8237` that
+   no longer ran. Resetting the config to a local store and installing
+   `zenml[server]` for `sqlmodel` fixed the client. ZenML ≥ 0.91 requires Python
+   ≥ 3.10, so upgrading was not an option in this 3.9.6 environment — the
+   downgrade path was the correct one, not a workaround.
+2. With a healthy client, the pipeline *still* fell back. `pipeline.py` had
+   `from __future__ import annotations`, which turns every annotation into a
+   string; ZenML looks step I/O types up in a materializer registry keyed by
+   class and raised `AttributeError: 'str' object has no attribute '__mro__'`
+   while compiling. Removing that import fixed orchestration.
+
+The fallback masked the second bug for the whole build, because it printed only
+the exception *class name* — which made a compile-time defect in the code read
+exactly like an unreachable server. It now prints the message, and a test asserts
+the step annotations resolve to real classes. The fallback itself stays: ZenML is
+a `requirements-dev.txt` dependency, and a serving-only install must still be
+able to retrain.
+
 ### Known gaps
 
-- **ZenML orchestration runs via the direct fallback.** The `@step`/`@pipeline`
-  definitions exist and are used when a ZenML server is reachable, but this
-  machine's ZenML install is missing server dependencies (`sqlmodel`) and its
-  global config points at a server that is not running. Training deliberately
-  does not depend on it — the fallback executes identical steps and produces
-  identical metrics. Chasing the dependency chain would have added nothing to
-  the modelling result.
 - **Streamlit Community Cloud deployment needs a manual signup**, which is
-  outside what can be automated here. The app is deployment-ready.
+  outside what can be automated here. The app is deployment-ready and the exact
+  click path is in the README.

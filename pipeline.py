@@ -8,7 +8,13 @@ The core functions (_ingest/_eda/_train_and_select) are plain and importable,
 so tests and CI can exercise the logic without a ZenML server.
 """
 
-from __future__ import annotations
+# NOTE: deliberately no `from __future__ import annotations` in this module.
+# PEP 563 turns every annotation into a string, and ZenML resolves each step's
+# input/output types by looking them up in the materializer registry -- which
+# indexes by class. Given the string "dict" it raises
+# `AttributeError: 'str' object has no attribute '__mro__'` at compile time, the
+# whole pipeline drops to the fallback path below, and nothing says why. The
+# other modules keep the future import; this one must not.
 
 import json
 import shutil
@@ -199,8 +205,12 @@ def run(use_zenml: bool = True) -> dict:
             training_pipeline()
             return {"orchestrator": "zenml"}
         except Exception as exc:
+            # Print the message, not just the exception class. A bare class name
+            # made a real compile-time bug in the step signatures look identical
+            # to "the server is down", and it stayed hidden for several runs.
             print(
-                f"ZenML orchestration unavailable ({type(exc).__name__}); running the same steps directly.",
+                f"ZenML orchestration unavailable ({type(exc).__name__}: {exc}); "
+                "running the same steps directly.",
                 flush=True,
             )
     parquet = _ingest()

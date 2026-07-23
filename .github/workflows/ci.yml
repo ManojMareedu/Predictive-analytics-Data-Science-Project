@@ -24,8 +24,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          # The exported model only unpickles under the versions that wrote it,
-          # and requirements.txt floats. Same reason as the Dockerfile.
+          # Normally a no-op -- requirements.txt already pins the model-critical
+          # libraries. Kept because MLflow rewrites this file on every retrain, so
+          # it is the pin that cannot go stale. Same reason as the Dockerfile.
           pip install -r exported_model/requirements.txt
           pip install pytest ruff httpx
 
@@ -71,7 +72,7 @@ jobs:
                  "price_per_volume_no_merch":3.49,"price_per_volume_any_merch":2.99,
                  "acv_distribution_no_merch":65.0,"acv_distribution_any_merch":40.0,
                  "year":2022,"week":26,"brand":"BLUEBONNET",
-                 "geography":"Great Lakes - Multi Outlet + Conv"}' | tee /dev/stderr | grep -q predicted_unit_sales
+                 "geography":"Great Lakes - IRI Standard - Multi Outlet + Conv"}' | tee /dev/stderr | grep -q predicted_unit_sales
 
       - name: Container logs on failure
         if: failure()

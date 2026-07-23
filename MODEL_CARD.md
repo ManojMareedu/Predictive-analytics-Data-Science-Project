@@ -275,3 +275,13 @@ Full detail in `DATA_DICTIONARY.md`; the measured audit is
 
   Runtime is roughly 40 minutes on a laptop CPU, dominated by lasso and
   elasticnet coordinate descent. No GPU is used or needed.
+
+- **Training interpreter vs. serving interpreter.** The exported artifact was
+  written under Python 3.9.6 — `exported_model/python_env.yaml` and `conda.yaml`
+  record it — while the container and CI both run Python 3.11. This is deliberate
+  and safe: the pickle's compatibility constraint is the *library* versions
+  (`scikit-learn==1.6.1`, `numpy==2.0.2`, `scipy==1.13.1`, `cloudpickle==3.1.2`),
+  which `requirements.txt` pins exactly and which install identically on both
+  interpreters. The CI job builds the image on 3.11, loads this artifact, and
+  smoke-tests `/predict` on every push, so the cross-version load is verified
+  rather than assumed.
