@@ -46,40 +46,77 @@ and push per phase.
       `Year == 2022`, which silently dropped the 3,564 rows whose week ends
       01-01-2023 from both train and test. Now `Year >= 2022`.
 
-## Phase D — Serving
+## Phase D — Serving ✅
 
-- [ ] `app/model_server.py` — FastAPI with `/health`, `/predict`, `/model-info`
-- [ ] `Dockerfile` + `.dockerignore`
+- [x] `app/model_server.py` — FastAPI with `/health`, `/predict`, `/model-info`
+- [x] `Dockerfile` + `.dockerignore`, non-root, healthcheck
+- [x] Verified: container returns the same prediction as the local model
+      (140,292.4 units), against an actual median of 127,941 for that brand,
+      region and distribution band
 
-## Phase D.5 — Kubernetes (local only)
+## Phase D.5 — Kubernetes (local only) ✅
 
-- [ ] `k8s/` — Deployment, Service, ConfigMap, small resource limits
-- [ ] Documented `kind`/`minikube`/Docker Desktop spin-up
+- [x] `k8s/` — Deployment (2 replicas, probes, non-root, 100m/256Mi), Service,
+      ConfigMap
+- [x] Verified on a live local cluster: both pods `1/1 Running`, `/health` and
+      `/predict` served through the Service via port-forward
 
-## Phase E — Dashboard
+## Phase E — Dashboard ✅
 
-- [ ] `streamlit_app.py` — regional performance, brand drivers, price elasticity,
+- [x] `streamlit_app.py` — regional performance, brand drivers, price elasticity,
       merch vs no-merch, model comparison, live prediction form
+- [x] Reads 17 KB of committed aggregates instead of the 81 MB Parquet, so it
+      deploys to Streamlit Community Cloud with no data pull and no backend
+- [x] Verified via `AppTest`: 0 exceptions, 5 tabs, real data
 
-## Phase F — Tests & CI
+## Phase F — Tests & CI ✅
 
-- [ ] `tests/` — cleaning, feature engineering, leakage guard, API smoke test
-- [ ] `.github/workflows/ci.yml` — lint → test → docker build → `/health` smoke
+- [x] `tests/` — cleaning, schema drift, calendar derivation, leakage guard,
+      multiplicity correction, seeding, and FastAPI smoke tests. 15 passing.
+- [x] `.github/workflows/ci.yml` — lint → format → test → docker build →
+      `/health` and `/predict` smoke
 
-## Phase G — Docs & polish
+## Phase G — Docs & polish ✅
 
-- [ ] `README.md` rewrite
-- [ ] `MODEL_CARD.md` finalised
-- [ ] This file marked complete
+- [x] `README.md` rewritten
+- [x] `MODEL_CARD.md` finalised with the real numbers
+- [x] This file marked complete
 
 ## Done — what changed vs. the original notebook
 
-Filled in as phases complete; see `MODEL_CARD.md` for the metrics discussion.
+See `MODEL_CARD.md` for the full metrics discussion.
 
-- The headline accuracy figure changed. The notebook reported ~81% by training on
-  columns that are mechanical components of the target (`Base Volume Sales` and
-  friends). Those are excluded now, and the honest temporal-holdout number is
-  materially lower — see `MODEL_CARD.md`.
-- Evaluation moved from a random split to a temporal one (train <2022, test
+- **The headline accuracy figure changed.** The notebook reported ~81% by
+  training on columns that are mechanical components of the target
+  (`Base Volume Sales` and friends). Those are excluded now. The honest
+  temporal-holdout number is **R² = 0.635** (HistGradientBoosting).
+- **Evaluation moved from a random split to a temporal one** (train <2022, test
   2022+), which is the question that actually matters for deployment.
-- Every reported metric now carries a CV mean ± std next to it.
+- **Every reported metric carries a CV mean ± std** next to the holdout number.
+- **The CV/holdout gap is reported, not hidden.** 0.908 CV vs 0.635 holdout: a
+  shuffled split lets a boosted tree memorise product-region volume levels. That
+  gap is the argument for the temporal split, so it belongs in the write-up.
+- **Rigor checks added:** VIF (max 2.51, nothing dropped), residual diagnostics
+  (33× heteroscedasticity, skew 14.7, kurtosis 390.5), Bonferroni/BH corrections
+  (11 raw → 9 Bonferroni-significant), and a measured data-quality audit.
+- **Two real bugs found and fixed:**
+  1. The holdout `Year == 2022` silently dropped 3,564 rows dated 01-01-2023
+     from both train and test. Now `Year >= 2022`.
+  2. The serving container installed whatever scikit-learn was current (1.9.0)
+     against a model pickled by 1.6.1, so it could not unpickle. The image and
+     CI now install `exported_model/requirements.txt`, which MLflow regenerates
+     on every export.
+- **Infrastructure added:** DVC data versioning, MLflow tracking and registry,
+  FastAPI serving, Docker, local Kubernetes, Streamlit dashboard, tests and CI.
+
+### Known gaps
+
+- **ZenML orchestration runs via the direct fallback.** The `@step`/`@pipeline`
+  definitions exist and are used when a ZenML server is reachable, but this
+  machine's ZenML install is missing server dependencies (`sqlmodel`) and its
+  global config points at a server that is not running. Training deliberately
+  does not depend on it — the fallback executes identical steps and produces
+  identical metrics. Chasing the dependency chain would have added nothing to
+  the modelling result.
+- **Streamlit Community Cloud deployment needs a manual signup**, which is
+  outside what can be automated here. The app is deployment-ready.

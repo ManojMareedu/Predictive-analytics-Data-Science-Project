@@ -24,6 +24,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          # The exported model only unpickles under the versions that wrote it,
+          # and requirements.txt floats. Same reason as the Dockerfile.
+          pip install -r exported_model/requirements.txt
           pip install pytest ruff httpx
 
       - name: Lint
