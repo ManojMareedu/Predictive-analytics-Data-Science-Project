@@ -105,8 +105,35 @@ seen" is the deployment question.
   within-product elasticity — it should not be read as "cut price by X, gain Y".
 - **Region matters, and it is not noise.** One-way ANOVA across the 8 regions:
   F = 549.2, p ≈ 0.
+
+![Mean non-promoted unit sales by IRI region](Visualization%20Results/regional_unit_sales.png)
+
+*Mean non-promoted unit sales for each of the 8 IRI regions: Southeast sells
+roughly 2.3× what Plains does per region-week, which is the spread the ANOVA
+above is measuring.*
+
 - **2020 is genuinely different from every neighbouring year** (2019 vs 2020 at
   p = 1.5×10⁻⁶³), and that difference survives every multiplicity correction.
+
+![Mean non-promoted unit sales by year, 2018 to 2023](Visualization%20Results/yearly_trend.png)
+
+*Mean units per region-week by year. The 2020 spike is the pandemic shift the
+t-tests pick up; the 2023 point is a calendar artifact of 3,564 rows from the
+week ending 01-01-2023, not a sixth year of data.*
+
+- **Volume is heavily concentrated.** Of 374 brand labels, the top 2 carry
+  **39.4%** of all non-promoted units and the top 12 carry **90.5%** — which is
+  why the one-hot encoder collapses the long tail below `min_frequency=2000`
+  rather than spending 370 columns on it.
+
+![Top 12 brands by total non-promoted unit sales](Visualization%20Results/top_brands.png)
+
+*Top 12 brands by total non-promoted units. This plot also shows the brand
+heuristic's limits in the open: "brand" is the first two tokens of the product
+description, so `LAND O LAKES` becomes `LANDO` and `I CAN'T BELIEVE IT'S NOT
+BUTTER` becomes `ICANT`. It is not an official brand mapping — see the
+limitations in [`MODEL_CARD.md`](MODEL_CARD.md).*
+
 - **Prediction reliability varies 2.5× by region.** Residual spread runs from
   5,390 (Plains) to 13,206 (South Central). Planners should not treat all regions
   as equally trustworthy.
@@ -346,6 +373,20 @@ Findings worth stating plainly:
   single global RMSE is therefore *not* a valid error bar for an individual
   prediction, and confidence intervals must scale with the predicted level rather
   than being constant width.
+
+![Residuals versus fitted values on the 2022 holdout](Visualization%20Results/residuals_vs_fitted.png)
+
+*Residuals against fitted values on the 193,930 holdout rows. The funnel opening
+to the right is the heteroscedasticity: error on a row predicted near 100,000
+units is on a completely different scale from one predicted near 500, which is
+why the global RMSE of 10,003 is not a usable error bar for a single prediction.*
+
+![Normal Q-Q plot of holdout residuals](Visualization%20Results/residuals_qq.png)
+
+*Normal Q-Q plot of the same residuals. The points leave the red normal line hard
+in both tails and especially the upper one, topping out near +400,000 units — so
+any interval estimate assuming Gaussian errors is invalid, and intervals should
+come from empirical residual quantiles instead.*
 - **The multiplicity correction changes conclusions.** 11 of 15 year comparisons
   are significant at raw p < 0.05; only **9 survive Bonferroni**. 2018 vs 2021
   (raw p = 0.0053 → 0.079) and 2019 vs 2023 (raw p = 0.0131 → 0.197) should not
