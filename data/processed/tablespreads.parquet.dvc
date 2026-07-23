@@ -1,0 +1,5 @@
+outs:
+- md5: bd5c3f018b360d34820d62826844e5d4
+  size: 81402528
+  hash: md5
+  path: tablespreads.parquet

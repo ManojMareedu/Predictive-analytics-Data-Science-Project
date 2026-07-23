@@ -1,0 +1,111 @@
+{
+  "best_model": "hist_gbr",
+  "target": "Unit Sales No Merch",
+  "feature_cols": [
+    "Price per Unit No Merch",
+    "Price per Unit Any Merch",
+    "Price per Volume No Merch",
+    "Price per Volume Any Merch",
+    "ACV Weighted Distribution No Merch",
+    "ACV Weighted Distribution Any Merch",
+    "Year",
+    "Week",
+    "Brand",
+    "Geography"
+  ],
+  "test_year": 2022,
+  "random_seed": 42,
+  "cv_folds": 5,
+  "n_train": 808635,
+  "n_test": 193930,
+  "metrics": {
+    "ridge": {
+      "r2": 0.419098731678723,
+      "rmse": 12614.169552455696,
+      "mae": 4958.914691371566,
+      "cv_r2_mean": 0.40230997635446697,
+      "cv_r2_std": 0.0036949226598957884,
+      "cv_rmse_mean": 12306.842540755912,
+      "cv_rmse_std": 36.28109470130797,
+      "cv_mae_mean": 4766.0044375707275,
+      "cv_mae_std": 15.371126437226259
+    },
+    "lasso": {
+      "r2": 0.41895198506741205,
+      "rmse": 12615.762740357999,
+      "mae": 4938.435315659339,
+      "cv_r2_mean": 0.4022739568922827,
+      "cv_r2_std": 0.003681288185034907,
+      "cv_rmse_mean": 12307.214119224333,
+      "cv_rmse_std": 36.23594232112686,
+      "cv_mae_mean": 4751.387375890648,
+      "cv_mae_std": 15.256120964606573
+    },
+    "elasticnet": {
+      "r2": 0.31129743998470805,
+      "rmse": 13734.831965465208,
+      "mae": 4143.071643006502,
+      "cv_r2_mean": 0.30271632799208026,
+      "cv_r2_std": 0.0006334431748492268,
+      "cv_rmse_mean": 13292.868858044245,
+      "cv_rmse_std": 50.48212161285576,
+      "cv_mae_mean": 3956.7350087899795,
+      "cv_mae_std": 11.425020450987246
+    },
+    "polynomial": {
+      "r2": 0.4303618306110166,
+      "rmse": 12491.282861284733,
+      "mae": 4507.873160476961,
+      "cv_r2_mean": 0.5103739309752535,
+      "cv_r2_std": 0.0048119955040431366,
+      "cv_rmse_mean": 11138.683019683138,
+      "cv_rmse_std": 26.00127864826188,
+      "cv_mae_mean": 4353.1481727821865,
+      "cv_mae_std": 9.489626168572666
+    },
+    "hist_gbr": {
+      "r2": 0.634700725965442,
+      "rmse": 10003.037719540765,
+      "mae": 2269.68847094013,
+      "cv_r2_mean": 0.9079273861032877,
+      "cv_r2_std": 0.0022196521364111666,
+      "cv_rmse_mean": 4829.9786368576915,
+      "cv_rmse_std": 58.10638544629551,
+      "cv_mae_mean": 1480.351913041381,
+      "cv_mae_std": 7.563183051981072
+    }
+  },
+  "residual_diagnostics": {
+    "resid_mean": 591.6289226130428,
+    "resid_std": 9985.526467667241,
+    "resid_skew": 14.747773875087617,
+    "resid_kurtosis": 390.51439651055233,
+    "spread_ratio_top_vs_bottom_quintile": 33.068009386992415,
+    "plots": [
+      "Visualization Results/residuals_vs_fitted.png",
+      "Visualization Results/residuals_qq.png"
+    ],
+    "resid_std_by_group": {
+      "Plains - IRI Standard - Multi Outlet + Conv": 5390.177760910407,
+      "California - IRI Standard - Multi Outlet + Conv": 6630.8354808425465,
+      "West - IRI Standard - Multi Outlet + Conv": 7103.302345909924,
+      "Northeast - IRI Standard - Multi Outlet + Conv": 9311.677934894255,
+      "Mid-South - IRI Standard - Multi Outlet + Conv": 10715.877526134982,
+      "Great Lakes - IRI Standard - Multi Outlet + Conv": 11325.404590506927,
+      "Southeast - IRI Standard - Multi Outlet + Conv": 12630.913556610758,
+      "South Central - IRI Standard - Multi Outlet + Conv": 13206.283895964474
+    }
+  },
+  "sample_input": {
+    "Price per Unit No Merch": 1.1026849746704102,
+    "Price per Unit Any Merch": 1.0159779787063599,
+    "Price per Volume No Merch": 1.1026849746704102,
+    "Price per Volume Any Merch": 1.0159779787063599,
+    "ACV Weighted Distribution No Merch": 25.690160751342773,
+    "ACV Weighted Distribution Any Merch": 2.3721423149108887,
+    "Year": 2022,
+    "Week": 52,
+    "Brand": "BLUEBONNET",
+    "Geography": "California - IRI Standard - Multi Outlet + Conv"
+  }
+}

@@ -1,0 +1,10 @@
+-r requirements.txt
+
+# Orchestration, data versioning, tooling
+zenml>=0.55
+dvc>=3.0
+pytest>=8.0
+ruff>=0.3
+black>=24.0
+jupyter>=1.0
+httpx>=0.27

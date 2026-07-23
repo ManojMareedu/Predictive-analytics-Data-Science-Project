@@ -1,0 +1,35 @@
+# Data (tracked via DVC, not git)
+*.xlsx
+data/processed/*.parquet
+Conagra_Data_Files/Conagra Data Files.zip
+
+# MLflow / ZenML / DVC
+mlruns/
+mlflow.db
+.zen/
+.dvc/cache/
+.dvc/tmp/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# OS / editor
+.DS_Store
+.ipynb_checkpoints/
+.vscode/
+
+# Local DVC remote (the storage itself, not the pointer files)
+dvc-storage/
+
+# Training logs
+logs/
+
+.Rhistory
+
+# Model artifacts are exported explicitly; keep exported_model/ tracked

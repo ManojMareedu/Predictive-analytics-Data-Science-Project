@@ -1,0 +1,34 @@
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.9.6
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.6.1
+is_signature_from_type_hint: false
+mlflow_version: 3.1.4
+model_id: null
+model_size_bytes: 1103850
+model_uuid: 4a860f7579a14ce3a2b9724202f5a6dd
+prompts: null
+signature:
+  inputs: '[{"type": "float", "name": "Price per Unit No Merch", "required": true},
+    {"type": "float", "name": "Price per Unit Any Merch", "required": true}, {"type":
+    "float", "name": "Price per Volume No Merch", "required": true}, {"type": "float",
+    "name": "Price per Volume Any Merch", "required": true}, {"type": "float", "name":
+    "ACV Weighted Distribution No Merch", "required": true}, {"type": "float", "name":
+    "ACV Weighted Distribution Any Merch", "required": true}, {"type": "integer",
+    "name": "Year", "required": true}, {"type": "integer", "name": "Week", "required":
+    true}, {"type": "string", "name": "Brand", "required": true}, {"type": "string",
+    "name": "Geography", "required": true}]'
+  outputs: '[{"type": "tensor", "tensor-spec": {"dtype": "float64", "shape": [-1]}}]'
+  params: null
+type_hint_from_example: false
+utc_time_created: '2026-07-23 08:39:48.063421'

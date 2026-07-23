@@ -1,0 +1,181 @@
+{
+  "region_anova_F": 549.24755859375,
+  "region_anova_p": 0.0,
+  "n_year_ttests": 15,
+  "min_ttest_p_raw": 1.480571812004921e-63,
+  "n_significant_raw": 11,
+  "n_significant_bonferroni": 9,
+  "n_significant_bh": 11,
+  "year_ttests": [
+    {
+      "year_a": 2018,
+      "year_b": 2019,
+      "t_stat": 3.2823934001271167,
+      "p_value": 0.0010293860504377225,
+      "p_bonferroni": 0.015440790756565839,
+      "p_bh": 0.0017156434173962044,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2018,
+      "year_b": 2020,
+      "t_stat": -13.830393162491413,
+      "p_value": 1.7111256895404712e-43,
+      "p_bonferroni": 2.5666885343107068e-42,
+      "p_bh": 1.2833442671553534e-42,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2018,
+      "year_b": 2021,
+      "t_stat": -2.7896041715841706,
+      "p_value": 0.005277503683369133,
+      "p_bonferroni": 0.079162555250537,
+      "p_bh": 0.0079162555250537,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2018,
+      "year_b": 2022,
+      "t_stat": -8.045116602258654,
+      "p_value": 8.640881545745205e-16,
+      "p_bonferroni": 1.2961322318617808e-14,
+      "p_bh": 2.5922644637235615e-15,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2018,
+      "year_b": 2023,
+      "t_stat": -1.9253378800607939,
+      "p_value": 0.05426430807549836,
+      "p_bonferroni": 0.8139646211324755,
+      "p_bh": 0.06783038509437295,
+      "significant_bh": false
+    },
+    {
+      "year_a": 2019,
+      "year_b": 2020,
+      "t_stat": -16.83268070525752,
+      "p_value": 1.480571812004921e-63,
+      "p_bonferroni": 2.2208577180073813e-62,
+      "p_bh": 2.2208577180073817e-62,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2019,
+      "year_b": 2021,
+      "t_stat": -5.965777475384254,
+      "p_value": 2.4367590717072383e-09,
+      "p_bonferroni": 3.6551386075608574e-08,
+      "p_bh": 6.091897679268096e-09,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2019,
+      "year_b": 2022,
+      "t_stat": -11.13052874375947,
+      "p_value": 9.002279664583113e-29,
+      "p_bonferroni": 1.350341949687467e-27,
+      "p_bh": 4.501139832291556e-28,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2019,
+      "year_b": 2023,
+      "t_stat": -2.481693389833954,
+      "p_value": 0.013120459082850575,
+      "p_bonferroni": 0.1968068862427586,
+      "p_bh": 0.017891535112978058,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2020,
+      "year_b": 2021,
+      "t_stat": 10.90775455896685,
+      "p_value": 1.0680033919154838e-27,
+      "p_bonferroni": 1.6020050878732256e-26,
+      "p_bh": 4.005012719683064e-27,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2020,
+      "year_b": 2022,
+      "t_stat": 5.715041480206076,
+      "p_value": 1.0975583720858009e-08,
+      "p_bonferroni": 1.6463375581287012e-07,
+      "p_bh": 2.3519107973267162e-08,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2020,
+      "year_b": 2023,
+      "t_stat": 0.7255522949185267,
+      "p_value": 0.4681588456940854,
+      "p_bonferroni": 1.0,
+      "p_bh": 0.5015987632436629,
+      "significant_bh": false
+    },
+    {
+      "year_a": 2021,
+      "year_b": 2022,
+      "t_stat": -5.1885798676256005,
+      "p_value": 2.1201078402406475e-07,
+      "p_bonferroni": 3.1801617603609714e-06,
+      "p_bh": 3.975202200451214e-07,
+      "significant_bh": true
+    },
+    {
+      "year_a": 2021,
+      "year_b": 2023,
+      "t_stat": -1.4286915099253308,
+      "p_value": 0.15317764189699093,
+      "p_bonferroni": 1.0,
+      "p_bh": 0.17674343295806644,
+      "significant_bh": false
+    },
+    {
+      "year_a": 2022,
+      "year_b": 2023,
+      "t_stat": -0.4387309029569229,
+      "p_value": 0.6608821098761197,
+      "p_bonferroni": 1.0,
+      "p_bh": 0.6608821098761197,
+      "significant_bh": false
+    }
+  ],
+  "vif": [
+    {
+      "feature": "Price per Volume Any Merch",
+      "vif": 2.5092750880327723
+    },
+    {
+      "feature": "Price per Unit Any Merch",
+      "vif": 2.5010466522521924
+    },
+    {
+      "feature": "Price per Volume No Merch",
+      "vif": 1.7026755716152249
+    },
+    {
+      "feature": "Price per Unit No Merch",
+      "vif": 1.4803989454035171
+    },
+    {
+      "feature": "ACV Weighted Distribution No Merch",
+      "vif": 1.2757117778019498
+    },
+    {
+      "feature": "ACV Weighted Distribution Any Merch",
+      "vif": 1.212351343638533
+    },
+    {
+      "feature": "Year",
+      "vif": 1.0127876356587002
+    },
+    {
+      "feature": "Week",
+      "vif": 1.0014050692479806
+    }
+  ],
+  "max_vif": 2.5092750880327723
+}
