@@ -1,0 +1,27 @@
+# Keep the build context small — the raw data is ~380 MB and the image needs none of it.
+*.xlsx
+Conagra_Data_Files/
+data/
+dvc-storage/
+.dvc/
+mlruns/
+mlflow.db
+logs/
+.venv/
+venv/
+__pycache__/
+*.pyc
+.git/
+.github/
+.pytest_cache/
+.ruff_cache/
+tests/
+notebooks/
+*.ipynb
+*.docx
+*.pdf
+*.pptx
+Visualization Results/
+k8s/
+streamlit_app.py
+*.md

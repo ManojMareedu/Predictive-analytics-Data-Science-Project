@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tablespreads-api
+  labels:
+    app: tablespreads-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: tablespreads-api
+  template:
+    metadata:
+      labels:
+        app: tablespreads-api
+    spec:
+      containers:
+        - name: api
+          image: tablespreads-api:latest
+          # The image is built locally and side-loaded into the cluster
+          # (`kind load docker-image`), so never try to pull it from a registry.
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          envFrom:
+            - configMapRef:
+                name: tablespreads-config
+          # Small on purpose: this proves the deployment pattern on a laptop
+          # cluster, it does not serve production traffic.
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          # Readiness gates traffic; liveness restarts a wedged process. Both hit
+          # /health, which reports degraded if the model failed to load.
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 20
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tablespreads-config
+data:
+  # Where model_server.py looks for the exported MLflow model. Baked into the
+  # image at /app/exported_model; overridable here if it is ever mounted instead.
+  MODEL_DIR: "/app/exported_model"
+  LOG_LEVEL: "info"
